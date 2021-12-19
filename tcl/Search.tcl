@@ -691,12 +691,12 @@ define_cmd_args "report_disabled_edges" {}
 
 ################################################################
 
-define_cmd_args "report_tns" { [-digits digits]}
+define_cmd_args "report_tns" { [-digits digits] [-json key] }
 
 proc_redirect report_tns {
   global sta_report_default_digits
 
-  parse_key_args "report_tns" args keys {-digits} flags {}
+  parse_key_args "report_tns" args keys {-digits -json} flags {}
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
     check_positive_integer "-digits" $digits
@@ -704,17 +704,22 @@ proc_redirect report_tns {
     set digits $sta_report_default_digits
   }
 
-  report_line "tns [format_time [total_negative_slack_cmd "max"] $digits]"
+  set tns [total_negative_slack_cmd "max"]
+  report_line "tns [format_time  $tns $digits]"
+
+  if [info exists keys(-json)] {
+    utl::metric_float $keys(-json) $tns
+  }
 }
 
 ################################################################
 
-define_cmd_args "report_wns" { [-digits digits]}
+define_cmd_args "report_wns" { [-digits digits] [-json key]}
 
 proc_redirect report_wns {
   global sta_report_default_digits
 
-  parse_key_args "report_wns" args keys {-digits} flags {}
+  parse_key_args "report_wns" args keys {-digits -json} flags {}
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
     check_positive_integer "-digits" $digits
@@ -727,16 +732,20 @@ proc_redirect report_wns {
     set slack 0.0
   }
   report_line "wns [format_time $slack $digits]"
+
+  if [info exists keys(-json)] {
+    utl::metric_float $keys(-json) $slack
+  }
 }
 
 ################################################################
 
-define_cmd_args "report_worst_slack" {[-min] [-max] [-digits digits]}
+define_cmd_args "report_worst_slack" {[-min] [-max] [-digits digits] [-json key]}
 
 proc_redirect report_worst_slack {
   global sta_report_default_digits
 
-  parse_key_args "report_worst_slack" args keys {-digits} flags {-min -max}
+  parse_key_args "report_worst_slack" args keys {-digits -json} flags {-min -max}
   set min_max [parse_min_max_flags flags]
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
@@ -745,7 +754,12 @@ proc_redirect report_worst_slack {
     set digits $sta_report_default_digits
   }
 
-  report_line "worst slack [format_time [worst_slack_cmd $min_max] $digits]"
+  set slack [worst_slack_cmd $min_max]
+  report_line "worst slack [format_time $slack $digits]"
+
+  if [info exists keys(-json)] {
+    utl::metric_float $keys(-json) $slack
+  }
 }
 
 ################################################################
