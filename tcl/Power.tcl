@@ -26,12 +26,13 @@ define_cmd_args "report_power" \
   { [-instances instances]\
       [-corner corner_name]\
       [-digits digits]\
+      [-json class] \
       [> filename] [>> filename] }
 
 proc_redirect report_power {
   global sta_report_default_digits
 
-  parse_key_args "report_power" args keys {-instances -corner -digits} flags {} 1
+  parse_key_args "report_power" args keys {-instances -corner -digits -json} flags {} 1
 
   if { [info exists keys(-digits)] } {
     set digits $keys(-digits)
@@ -43,13 +44,20 @@ proc_redirect report_power {
 
   if { [info exists keys(-instances)] } {
     set insts [get_instances_error "-instances" $keys(-instances)]
-    report_power_insts $insts $corner $digits
+    if [info exists keys(-json)] {
+      set do_json true
+      set json_key $keys(-json)
+    } else {
+      set do_json false;
+      set json_key "nil"
+    }
+    report_power_insts $insts $corner $digits $do_json $json_key
   } else {
     report_power_design $corner $digits
   }
 }
 
-proc report_power_design { corner digits } {
+proc report_power_design { corner digits do_json json_key} {
   set power_result [design_power $corner]
   set totals        [lrange $power_result  0  3]
   set sequential    [lrange $power_result  4  7]
@@ -70,6 +78,13 @@ proc report_power_design { corner digits } {
   report_power_row "Total" $power_result $design_total $field_width $digits
 
   report_line "[format %-20s {}][power_col_percent $design_internal  $design_total $field_width][power_col_percent $design_switching $design_total $field_width][power_col_percent $design_leakage $design_total $field_width]"
+
+  if $do_json {
+    utl::metric_float "${json_key}__power__internal__total" $design_internal
+    utl::metric_float "${json_key}__power__switchng__total" $design_switching
+    utl::metric_float "${json_key}__power__leakage__total" $design_leakage
+    utl::metric_float "${json_key}__power__total" $design_total
+  }
 }
 
 proc max { x y } {
