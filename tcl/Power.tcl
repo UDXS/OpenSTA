@@ -44,6 +44,8 @@ proc_redirect report_power {
 
   if { [info exists keys(-instances)] } {
     set insts [get_instances_error "-instances" $keys(-instances)]
+    report_power_insts $insts $corner $digits 
+  } else {  
     if [info exists keys(-json)] {
       set do_json true
       set json_key $keys(-json)
@@ -51,9 +53,7 @@ proc_redirect report_power {
       set do_json false;
       set json_key "nil"
     }
-    report_power_insts $insts $corner $digits $do_json $json_key
-  } else {
-    report_power_design $corner $digits
+    report_power_design $corner $digits $do_json $json_key
   }
 }
 
