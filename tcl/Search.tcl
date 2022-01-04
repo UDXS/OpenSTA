@@ -329,13 +329,14 @@ proc delays_are_inf { delays } {
 define_cmd_args "report_clock_skew" {[-setup|-hold]\
 					   [-clock clocks]\
 					   [-corner corner_name]]\
-					   [-digits digits]}
+					   [-digits digits] \
+             [-json keys] }
 
 proc_redirect report_clock_skew {
   global sta_report_default_digits
 
   parse_key_args "report_clock_skew" args \
-    keys {-clock -corner -digits} flags {-setup -hold}
+    keys {-clock -corner -digits -json} flags {-setup -hold}
   check_argc_eq0 "report_clock_skew" $args
 
   if { [info exists flags(-setup)] && [info exists flags(-hold)] } {
@@ -362,6 +363,14 @@ proc_redirect report_clock_skew {
   }
   if { $clks != {} } {
     report_clk_skew $clks $corner $setup_hold $digits
+    if [info exists flags(-json)] {
+      set metrics [metric_clk_skew $clks $corner $setup_hold]
+      lassign $metrics ws wl_min wl_max
+      lassign $keys(-json) key_ws key_wl_min key_wl_max
+      utl::metric_float key_ws ws
+      utl::metric_float key_wl_min wl_min
+      utl::metric_float key_wl_max wl_max
+    }
   }
 }
 

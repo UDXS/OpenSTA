@@ -165,6 +165,52 @@ ClkSkews::reportClkSkew(ClockSet *clks,
   skews.deleteContents();
 }
 
+ClkSkewMetricsSummary*
+ClkSkews::metricClkSkew(ClockSet *clks,
+			const Corner *corner,
+			const SetupHold *setup_hold)
+{
+  ClkSkewMap skews;
+  findClkSkew(clks, corner, setup_hold, skews);
+
+  // Sorting clocks is unnecessary here.
+  ClockSeq clk_seq;
+  for (Clock *clk : *clks)
+    clk_seq.push_back(clk);
+
+  Unit *time_unit = units_->timeUnit();
+  ClockSeq::Iterator clk_iter2(sorted_clks);
+  float worst_skew = 0;
+  float worst_latency_min = 0;
+  float worst_latency_max = 0;
+  bool worst_set = false;
+
+  while (clk_iter2.hasNext()) {
+    Clock *clk = clk_iter2.next();
+    ClkSkew *clk_skew = skews.findKey(clk);
+    if (clk_skew) {
+      PathVertex *src_path = clk_skew->srcPath();
+      PathVertex *tgt_path = clk_skew->tgtPath();
+
+      float latency_max = clk_skew->srcLatency(this);
+      float latency_min = clk_skew->tgtLatency(this);
+
+      float skew = clk_skew->skew();
+
+      if(skew > worst_skew || !worst_set) {
+        worst_set = true;
+        worst_skew = skew;
+        worst_latency_min = latency_min;
+        worst_latency_max = latency_max;
+      }
+    }
+  }
+
+  skews.deleteContents();
+
+  return new ClkSkewMetricsSummary {worst_skew, worst_latency_min, worst_latency_max};
+}
+
 float
 ClkSkews::findWorstClkSkew(const Corner *corner,
                            const SetupHold *setup_hold)

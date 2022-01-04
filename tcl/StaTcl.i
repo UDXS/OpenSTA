@@ -79,6 +79,7 @@
 #include "search/Levelize.hh"
 #include "search/ReportPath.hh"
 #include "search/Power.hh"
+#include "search/ClkSkew.hh"
 
 namespace sta {
 
@@ -1535,6 +1536,17 @@ using namespace sta;
   }
     break;
   }
+}
+
+%typemap(out) ClkSkewMetricsSummary* {
+  ClkSkewMetricsSummary summary = $1;
+  Tcl_Obj* list = Tcl_NewListObj();
+
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_skew));
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_latency_min)) 
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_latency_max)); 
+
+  Tcl_SetObjResult(interp, list);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -4451,6 +4463,17 @@ report_clk_skew(ClockSet *clks,
 {
   cmdLinkedNetwork();
   Sta::sta()->reportClkSkew(clks, corner, setup_hold, digits);
+  delete clks;
+}
+
+ClkSkewMetricsSummary* 
+metric_clk_skew(
+  ClockSet *clks,
+		const Corner *corner,
+		const SetupHold *setup_hold) 
+{
+  cmdLinkedNetwork();
+  return Sta::sta()->metricClkSkew(clks, corner, setup_hold);
   delete clks;
 }
 

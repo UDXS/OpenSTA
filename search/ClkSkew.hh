@@ -27,6 +27,12 @@ class ClkSkew;
 
 typedef Map<Clock*, ClkSkew*> ClkSkewMap;
 
+struct ClkSkewMetricsSummary {
+	float worst_skew;
+  float worst_latency_min;
+  float worst_latency_max;
+}
+
 // Find and report min clock skews.
 class ClkSkews : public StaState
 {
@@ -37,6 +43,10 @@ public:
 		     const Corner *corner,
 		     const SetupHold *setup_hold,
 		     int digits);
+  ClkSkewMetricsSummary* metricClkSkew(
+    ClockSet *clks,
+		const Corner *corner,
+		const SetupHold *setup_hold);
   // Find worst clock skew.
   float findWorstClkSkew(const Corner *corner,
                          const SetupHold *setup_hold);
