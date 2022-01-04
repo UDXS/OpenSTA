@@ -1539,12 +1539,12 @@ using namespace sta;
 }
 
 %typemap(out) ClkSkewMetricsSummary* {
-  ClkSkewMetricsSummary summary = $1;
-  Tcl_Obj* list = Tcl_NewListObj();
+  ClkSkewMetricsSummary* summary = $1;
+  Tcl_Obj* list = Tcl_NewListObj(0, nullptr);
 
-  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_skew));
-  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_latency_min)) 
-  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary.worst_latency_max)); 
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary->worst_skew));
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary->worst_latency_min)) 
+  Tcl_ListObjAppendElement(interp, list, Tcl_NewDoubleObj(summary->worst_latency_max)); 
 
   Tcl_SetObjResult(interp, list);
 }

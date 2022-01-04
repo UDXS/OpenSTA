@@ -2584,6 +2584,17 @@ Sta::reportClkSkew(ClockSet *clks,
   clk_skews_->reportClkSkew(clks, corner, setup_hold, digits);
 }
 
+ClkSkewMetricsSummary*
+Sta::metricClkSkew(ClockSet *clks,
+		   const Corner *corner,
+		   const SetupHold *setup_hold)
+{
+  ensureClkArrivals();
+  if (clk_skews_ == nullptr)
+    clk_skews_ = new ClkSkews(this);
+  clk_skews_->metricClkSkew(clks, corner, setup_hold);
+}
+
 float
 Sta::findWorstClkSkew(const SetupHold *setup_hold)
 {

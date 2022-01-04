@@ -879,6 +879,10 @@ public:
 		     const Corner *corner,
 		     const SetupHold *setup_hold,
 		     int digits);
+  ClkSkewMetricsSummary* metricClkSkew(ClockSet *clks,
+		     const Corner *corner,
+		     const SetupHold *setup_hold);
+         
   float findWorstClkSkew(const SetupHold *setup_hold);
   // Header above reportPathEnd results.
   void reportPathEndHeader();
