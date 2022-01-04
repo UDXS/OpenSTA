@@ -363,7 +363,7 @@ proc_redirect report_clock_skew {
   }
   if { $clks != {} } {
     report_clk_skew $clks $corner $setup_hold $digits
-    if [info exists flags(-json)] {
+    if [info exists keys(-json)] {
       set metrics [metric_clk_skew $clks $corner $setup_hold]
       lassign $metrics ws wl_min wl_max
       lassign $keys(-json) key_ws key_wl_min key_wl_max
