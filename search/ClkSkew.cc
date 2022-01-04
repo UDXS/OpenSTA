@@ -179,7 +179,7 @@ ClkSkews::metricClkSkew(ClockSet *clks,
     clk_seq.push_back(clk);
 
   Unit *time_unit = units_->timeUnit();
-  ClockSeq::Iterator clk_iter2(sorted_clks);
+  ClockSeq::Iterator clk_iter2(clk_seq);
   float worst_skew = 0;
   float worst_latency_min = 0;
   float worst_latency_max = 0;

@@ -31,7 +31,7 @@ struct ClkSkewMetricsSummary {
 	float worst_skew;
   float worst_latency_min;
   float worst_latency_max;
-}
+};
 
 // Find and report min clock skews.
 class ClkSkews : public StaState
