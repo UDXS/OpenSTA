@@ -879,7 +879,7 @@ public:
 		     const Corner *corner,
 		     const SetupHold *setup_hold,
 		     int digits);
-  ClkSkewMetricsSummary* metricClkSkew(ClockSet *clks,
+  void* metricClkSkew(ClockSet *clks,
 		     const Corner *corner,
 		     const SetupHold *setup_hold);
          

@@ -4473,8 +4473,9 @@ metric_clk_skew(
 		const SetupHold *setup_hold) 
 {
   cmdLinkedNetwork();
-  return Sta::sta()->metricClkSkew(clks, corner, setup_hold);
+  void* res = Sta::sta()->metricClkSkew(clks, corner, setup_hold);
   delete clks;
+  return (ClkSkewMetricsSummary*)res;
 }
 
 float
