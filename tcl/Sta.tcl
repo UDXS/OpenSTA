@@ -1452,6 +1452,12 @@ proc report_units { args } {
   foreach unit {"time" "capacitance" "resistance" "voltage" "current" "power" "distance"} {
     report_line " $unit 1[unit_scale_abreviation $unit][unit_suffix $unit]"
   }
+  foreach unit {{"time" "timing"} {"power" "power"} {"distance" "distance"}} {
+    set utype [lindex $unit 0]
+    set umetric [lindex $unit 1]
+    utl::metric [append "run__flow__platform__" $umetric "_units"] "$utype 1[unit_scale_abreviation $utype][unit_suffix $utype]"
+    
+  }
 }
 
 ################################################################
