@@ -367,9 +367,9 @@ proc_redirect report_clock_skew {
       set metrics [metric_clk_skew $clks $corner $setup_hold]
       lassign $metrics ws wl_min wl_max
       lassign $keys(-json) key_ws key_wl_min key_wl_max
-      utl::metric_float key_ws ws
-      utl::metric_float key_wl_min wl_min
-      utl::metric_float key_wl_max wl_max
+      utl::metric_float $key_ws $ws
+      utl::metric_float $key_wl_min $wl_min
+      utl::metric_float $key_wl_max $wl_max
     }
   }
 }
