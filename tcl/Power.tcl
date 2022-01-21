@@ -80,10 +80,10 @@ proc report_power_design { corner digits do_json json_key} {
   report_line "[format %-20s {}][power_col_percent $design_internal  $design_total $field_width][power_col_percent $design_switching $design_total $field_width][power_col_percent $design_leakage $design_total $field_width]"
 
   if $do_json {
-    utl::metric_float "${json_key}__power__internal__total" $design_internal
-    utl::metric_float "${json_key}__power__switchng__total" $design_switching
-    utl::metric_float "${json_key}__power__leakage__total" $design_leakage
-    utl::metric_float "${json_key}__power__total" $design_total
+    utl::metric_float "${json_key}power__internal__total" $design_internal
+    utl::metric_float "${json_key}power__switchng__total" $design_switching
+    utl::metric_float "${json_key}power__leakage__total" $design_leakage
+    utl::metric_float "${json_key}power__total" $design_total
   }
 }
 
