@@ -329,14 +329,13 @@ proc delays_are_inf { delays } {
 define_cmd_args "report_clock_skew" {[-setup|-hold]\
 					   [-clock clocks]\
 					   [-corner corner_name]]\
-					   [-digits digits] \
-             [-json keys] }
+					   [-digits digits] }
 
 proc_redirect report_clock_skew {
   global sta_report_default_digits
 
   parse_key_args "report_clock_skew" args \
-    keys {-clock -corner -digits -json} flags {-setup -hold}
+    keys {-clock -corner -digits} flags {-setup -hold}
   check_argc_eq0 "report_clock_skew" $args
 
   if { [info exists flags(-setup)] && [info exists flags(-hold)] } {
@@ -363,14 +362,12 @@ proc_redirect report_clock_skew {
   }
   if { $clks != {} } {
     report_clk_skew $clks $corner $setup_hold $digits
-    if [info exists keys(-json)] {
-      set metrics [metric_clk_skew $clks $corner $setup_hold]
-      lassign $metrics ws wl_min wl_max
-      lassign $keys(-json) key_ws key_wl_min key_wl_max
-      utl::metric_float $key_ws $ws
-      utl::metric_float $key_wl_min $wl_min
-      utl::metric_float $key_wl_max $wl_max
-    }
+
+    set metrics [metric_clk_skew $clks $corner $setup_hold]
+    lassign $metrics ws wl_min wl_max
+    utl::metric_float "clock__skew__worst" $ws
+    utl::metric_float "clock__latency__min" $wl_min
+    utl::metric_float "clock__latency__max" $wl_max
   }
 }
 
@@ -700,12 +697,12 @@ define_cmd_args "report_disabled_edges" {}
 
 ################################################################
 
-define_cmd_args "report_tns" { [-digits digits] [-json key] }
+define_cmd_args "report_tns" { [-digits digits] }
 
 proc_redirect report_tns {
   global sta_report_default_digits
 
-  parse_key_args "report_tns" args keys {-digits -json} flags {}
+  parse_key_args "report_tns" args keys {-digits} flags {}
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
     check_positive_integer "-digits" $digits
@@ -716,19 +713,17 @@ proc_redirect report_tns {
   set tns [total_negative_slack_cmd "max"]
   report_line "tns [format_time  $tns $digits]"
 
-  if [info exists keys(-json)] {
-    utl::metric_float $keys(-json) $tns
-  }
+  utl::metric_float "timing__setup__tns" $tns
 }
 
 ################################################################
 
-define_cmd_args "report_wns" { [-digits digits] [-json key]}
+define_cmd_args "report_wns" { [-digits digits]}
 
 proc_redirect report_wns {
   global sta_report_default_digits
 
-  parse_key_args "report_wns" args keys {-digits -json} flags {}
+  parse_key_args "report_wns" args keys {-digits} flags {}
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
     check_positive_integer "-digits" $digits
@@ -742,19 +737,16 @@ proc_redirect report_wns {
   }
   report_line "wns [format_time $slack $digits]"
 
-  if [info exists keys(-json)] {
-    utl::metric_float $keys(-json) $slack
-  }
 }
 
 ################################################################
 
-define_cmd_args "report_worst_slack" {[-min] [-max] [-digits digits] [-json key]}
+define_cmd_args "report_worst_slack" {[-min] [-max] [-digits digits]}
 
 proc_redirect report_worst_slack {
   global sta_report_default_digits
 
-  parse_key_args "report_worst_slack" args keys {-digits -json} flags {-min -max}
+  parse_key_args "report_worst_slack" args keys {-digits} flags {-min -max}
   set min_max [parse_min_max_flags flags]
   if [info exists keys(-digits)] {
     set digits $keys(-digits)
@@ -766,9 +758,7 @@ proc_redirect report_worst_slack {
   set slack [worst_slack_cmd $min_max]
   report_line "worst slack [format_time $slack $digits]"
 
-  if [info exists keys(-json)] {
-    utl::metric_float $keys(-json) $slack
-  }
+  utl::metric_float "timing__setup__ws" $slack
 }
 
 ################################################################
