@@ -1455,7 +1455,7 @@ proc report_units { args } {
   foreach unit {{"time" "timing"} {"power" "power"} {"distance" "distance"}} {
     set utype [lindex $unit 0]
     set umetric [lindex $unit 1]
-    utl::metric [join {run__flow__platform__${umetric}_units}] "[unit_suffix $utype]"
+    utl::metric "run__flow__platform__${umetric}_units" "[unit_suffix $utype]"
     
   }
 }
